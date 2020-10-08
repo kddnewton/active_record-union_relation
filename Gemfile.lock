@@ -1,0 +1,21 @@
+PATH
+  remote: .
+  specs:
+    active_record-union (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.14.2)
+    rake (13.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  active_record-union!
+  minitest
+  rake
+
+BUNDLED WITH
+   2.1.4
