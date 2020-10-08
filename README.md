@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/kddeisz/active_record-union/workflows/Main/badge.svg)](https://github.com/kddeisz/active_record-union/actions)
 
-There are times when you want to use SQL's UNION operator to pull rows from multiple relations, but you still want to maintain the query-builder interface of ActiveRecord. This gem allows you to do that with minimal syntax.
+There are times when you want to use SQL's [UNION](https://www.w3schools.com/sql/sql_union.asp) operator to pull rows from multiple relations, but you still want to maintain the query-builder interface of ActiveRecord. This gem allows you to do that with minimal syntax.
 
 ## Installation
 
@@ -22,7 +22,22 @@ Or install it yourself as:
 
 ## Usage
 
+Let's assume you're writing something like a search function, and you want to be able to return a polymorphic relation containing all of the search results. You could maintain a separate index table with links out to the entities or use a more advanced search engine. Or you could perform a `UNION` that searches each table.
 
+`UNION` subrelations must all have the same number of columns, so first we define the name of the columns that the `UNION` will select, then we define the sources that will become those columns from each subrelation. It makes most sense looking at an example:
+
+```ruby
+Post.union(:id, :post_id, :matched) do |union|
+  posts = Post.where(published: true).where('title LIKE ?', "%#{term}%")
+  union.add posts, :id, nil, :title
+
+  comments = Comment.where('body LIKE ?', "%#{term}%")
+  union.add comments, :id, :post_id, :body
+
+  tags = Tag.where('name LIKE ?', "%#{term}%")
+  union.add tags, :id, nil, :name
+end
+```
 
 ## Development
 

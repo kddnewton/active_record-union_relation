@@ -5,12 +5,23 @@ require 'active_record/union/version'
 
 module ActiveRecord
   class Union
+    class Error < StandardError
+    end
+
     # Unions require that the number of columns coming from each subrelation all
     # match. When we pull the attributes out an instantiate the actual objects,
     # we then map them back to the original attribute names.
-    class MismatchedColumnsError < StandardError
+    class MismatchedColumnsError < Error
       def initialize(columns, sources)
         super("Expected #{columns.length} columns but got #{sources.length}")
+      end
+    end
+
+    # If you attempt to use a union before you've added any subqueries, we'll
+    # raise this error so there's not some weird undefined method behavior.
+    class NoConfiguredSubqueriesError < Error
+      def initialize
+        super('No subqueries have been configured for this union')
       end
     end
 
@@ -52,10 +63,9 @@ module ActiveRecord
       end
     end
 
-    attr_reader :model, :columns, :discriminator, :subqueries
+    attr_reader :columns, :discriminator, :subqueries
 
-    def initialize(model, columns, discriminator)
-      @model = model
+    def initialize(columns, discriminator)
       @columns = columns.map(&:to_s)
       @discriminator = discriminator
       @subqueries = []
@@ -73,30 +83,34 @@ module ActiveRecord
     # Creates an ActiveRecord::Relation object that will pull all of the
     # subqueries together.
     def all
-      discriminator = self.discriminator
-      mappings = subqueries.to_h { |subquery| subquery.to_mapping(columns) }
+      raise NoConfiguredSubqueriesError if subqueries.empty?
 
-      subclass =
-        Class.new(model) do
-          define_singleton_method(:inheritance_column) { discriminator }
-          define_singleton_method(:instantiate) do |attributes, column_types = {}, &block|
-            type = attributes.delete(inheritance_column)
-
-            instantiate_instance_of(
-              Object.const_get(type),
-              attributes.transform_keys(&mappings[type]),
-              column_types,
-              &block
-            )
-          end
-        end
-
-      subclass.from(union).select(discriminator, *columns)
+      model = subqueries.first.relation.model
+      subclass_for(model).from(union_for(model)).select(discriminator, *columns)
     end
 
     private
 
-    def union
+    def subclass_for(model)
+      discriminator = self.discriminator
+      mappings = subqueries.to_h { |subquery| subquery.to_mapping(columns) }
+
+      Class.new(model) do
+        define_singleton_method(:inheritance_column) { discriminator }
+        define_singleton_method(:instantiate) do |attributes, column_types = {}, &block|
+          type = attributes.delete(inheritance_column)
+
+          instantiate_instance_of(
+            Object.const_get(type),
+            attributes.transform_keys(&mappings[type]),
+            column_types,
+            &block
+          )
+        end
+      end
+    end
+
+    def union_for(model)
       Arel::Nodes::As.new(
         subqueries
           .map { |subquery| subquery.to_arel(columns, discriminator) }
@@ -106,18 +120,16 @@ module ActiveRecord
     end
   end
 
-  class Base
-    # Unions require that you have an equal number of columns from each
-    # subquery. The columns argument being passed here is any number of
-    # symbols that represent the columns that will be queried. When you then go
-    # to add sources into the union you'll need to pass the same number of
-    # columns.
-    #
-    # One additional column will be added to the query in order to discriminate
-    # between all of the unioned types. Then when the objects are going to be
-    # instantiated, we map the columns back to their original names.
-    def self.union(*columns, discriminator: 'discriminator')
-      Union.new(self, columns, discriminator).tap { |union| yield union }.all
-    end
+  # Unions require that you have an equal number of columns from each
+  # subquery. The columns argument being passed here is any number of
+  # symbols that represent the columns that will be queried. When you then go
+  # to add sources into the union you'll need to pass the same number of
+  # columns.
+  #
+  # One additional column will be added to the query in order to discriminate
+  # between all of the unioned types. Then when the objects are going to be
+  # instantiated, we map the columns back to their original names.
+  def self.union(*columns, discriminator: 'discriminator')
+    Union.new(columns, discriminator).tap { |union| yield union }.all
   end
 end

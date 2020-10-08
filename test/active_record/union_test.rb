@@ -7,10 +7,24 @@ class ActiveRecord::UnionTest < Minitest::Test
     refute_nil ::ActiveRecord::Union::VERSION
   end
 
-  def test_union
+  def test_empty_union
+    assert_raises ActiveRecord::Union::NoConfiguredSubqueriesError do
+      ActiveRecord.union(:id, :post_id, :matched) {}
+    end
+  end
+
+  def test_bad_config_union
+    assert_raises ActiveRecord::Union::MismatchedColumnsError do
+      ActiveRecord.union(:id) do |union|
+        union.add Post.all, :id, :title
+      end
+    end
+  end
+
+  def test_good_union
     term = 'foo'
     relation =
-      Post.union(:id, :post_id, :matched) do |union|
+      ActiveRecord.union(:id, :post_id, :matched) do |union|
         posts = Post.where(published: true).where('title LIKE ?', "%#{term}%")
         comments = Comment.where('body LIKE ?', "%#{term}%")
         tags = Tag.where('name LIKE ?', "%#{term}%")
