@@ -1,0 +1,39 @@
+name: Main
+on: push
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      DATABASE_URL: postgres://postgres:@localhost:5432/test
+      RAILS_ENV: test
+    services:
+      postgres:
+        image: postgres:11.5
+        ports:
+        - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - run: sudo apt-get -yqq install libpq-dev
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+    - uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - name: Install deps
+      run: |
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+    - name: Lint and test
+      run: |
+        bundle exec rake test

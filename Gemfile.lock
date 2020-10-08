@@ -7,6 +7,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     minitest (5.14.2)
+    pg (1.2.3)
     rake (13.0.1)
 
 PLATFORMS
@@ -15,6 +16,7 @@ PLATFORMS
 DEPENDENCIES
   active_record-union!
   minitest
+  pg
   rake
 
 BUNDLED WITH
