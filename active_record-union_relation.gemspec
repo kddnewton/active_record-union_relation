@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require_relative 'lib/active_record/union/version'
+require_relative 'lib/active_record/union_relation/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'active_record-union'
-  spec.version       = ActiveRecord::Union::VERSION
+  spec.name          = 'active_record-union_relation'
+  spec.version       = ActiveRecord::UnionRelation::VERSION
   spec.authors       = ['Kevin Deisz']
   spec.email         = ['kevin.deisz@gmail.com']
 
   spec.summary       = 'Create ActiveRecord relations from UNIONs'
-  spec.homepage      = 'https://github.com/kddeisz/active_record-union'
+  spec.homepage      = 'https://github.com/kddeisz/active_record-union_relation'
   spec.license       = 'MIT'
 
   spec.files         = Dir.chdir(__dir__) do

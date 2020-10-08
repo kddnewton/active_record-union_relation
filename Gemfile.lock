@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_record-union (0.1.0)
+    active_record-union_relation (0.1.0)
       activerecord (>= 6)
 
 GEM
@@ -136,7 +136,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_record-union!
+  active_record-union_relation!
   minitest (~> 5.14)
   pg (~> 1.2)
   rails (~> 6.0)

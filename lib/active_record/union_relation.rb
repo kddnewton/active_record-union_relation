@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'active_record'
-require 'active_record/union/version'
+require 'active_record/union_relation/version'
 
 module ActiveRecord
-  class Union
+  class UnionRelation
     class Error < StandardError
     end
 
@@ -130,6 +130,6 @@ module ActiveRecord
   # between all of the unioned types. Then when the objects are going to be
   # instantiated, we map the columns back to their original names.
   def self.union(*columns, discriminator: 'discriminator')
-    Union.new(columns, discriminator).tap { |union| yield union }.all
+    UnionRelation.new(columns, discriminator).tap { |union| yield union }.all
   end
 end

@@ -1,6 +1,6 @@
-# ActiveRecord::Union
+# ActiveRecord::UnionRelation
 
-[![Build Status](https://github.com/kddeisz/active_record-union/workflows/Main/badge.svg)](https://github.com/kddeisz/active_record-union/actions)
+[![Build Status](https://github.com/kddeisz/active_record-union_relation/workflows/Main/badge.svg)](https://github.com/kddeisz/active_record-union_relation/actions)
 
 There are times when you want to use SQL's [UNION](https://www.w3schools.com/sql/sql_union.asp) operator to pull rows from multiple relations, but you still want to maintain the query-builder interface of ActiveRecord. This gem allows you to do that with minimal syntax.
 
@@ -9,7 +9,7 @@ There are times when you want to use SQL's [UNION](https://www.w3schools.com/sql
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_record-union'
+gem 'active_record-union_relation'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install active_record-union
+    $ gem install active_record-union_relation
 
 ## Usage
 
@@ -102,7 +102,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/active_record-union.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kddeisz/active_record-union_relation.
 
 ## License
 

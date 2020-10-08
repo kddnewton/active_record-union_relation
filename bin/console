@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
-require 'active_record/union'
+require 'active_record/union_relation'
 
 require 'irb'
 IRB.start(__FILE__)

@@ -2,19 +2,19 @@
 
 require 'test_helper'
 
-class ActiveRecord::UnionTest < Minitest::Test
+class ActiveRecord::UnionRelationTest < Minitest::Test
   def test_version
-    refute_nil ::ActiveRecord::Union::VERSION
+    refute_nil ::ActiveRecord::UnionRelation::VERSION
   end
 
   def test_empty_union
-    assert_raises ActiveRecord::Union::NoConfiguredSubqueriesError do
+    assert_raises ActiveRecord::UnionRelation::NoConfiguredSubqueriesError do
       ActiveRecord.union(:id, :post_id, :matched) {}
     end
   end
 
   def test_bad_config_union
-    assert_raises ActiveRecord::Union::MismatchedColumnsError do
+    assert_raises ActiveRecord::UnionRelation::MismatchedColumnsError do
       ActiveRecord.union(:id) do |union|
         union.add Post.all, :id, :title
       end
