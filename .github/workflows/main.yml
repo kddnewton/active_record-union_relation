@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
-      DATABASE_URL: postgres://postgres:@localhost:5432/test
+      DATABASE_URL: postgres://postgres:@localhost:5432/postgres
       RAILS_ENV: test
     services:
       postgres:
