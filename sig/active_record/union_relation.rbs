@@ -1,0 +1,72 @@
+# Placeholders until Arel is typed
+interface _Arel_SelectManager
+end
+
+interface _Arel_Nodes_Node
+end
+
+interface _Arel_Nodes_SqlLiteral
+end
+
+# Placeholders until ActiveRecord is typed
+interface _ActiveRecord_Connection
+  def quote_column_name: ((String | Symbol) name) -> String
+end
+
+interface _ActiveRecord_Base
+  def connection: () -> _ActiveRecord_Connection
+  def name: () -> String
+end
+
+interface _ActiveRecord_Relation
+  def model: () -> _ActiveRecord_Base
+  def select: (*String values) -> _ActiveRecord_Relation
+  def arel: () -> _Arel_SelectManager
+end
+
+# Actual types
+module ActiveRecord
+  class UnionRelation
+    class Error < StandardError
+    end
+
+    class MismatchedColumnsError < Error
+      def initialize: (Array[String] columns, Array[NilClass | Symbol] sources) -> void
+    end
+
+    class NoConfiguredSubqueriesError < Error
+      def initialize: () -> void
+    end
+
+    class Subquery
+      NULL: _Arel_Nodes_SqlLiteral
+
+      attr_reader relation: _ActiveRecord_Relation
+      attr_reader model_name: String
+      attr_reader sources: Array[NilClass | Symbol]
+
+      def initialize: (_ActiveRecord_Relation relation, Array[NilClass | Symbol] sources) -> void
+      def to_arel: (Array[String] columns, String discriminator) -> _Arel_SelectManager
+      def to_mapping: (Array[String] columns) -> [String, Hash[String, (NilClass | Symbol)]]
+
+      private
+
+      def quote_column_name: (String name) -> String
+    end
+
+    attr_reader columns: Array[String]
+    attr_reader discriminator: String
+    attr_reader subqueries: Array[Subquery]
+
+    def initialize: (Array[Symbol] columns, String discriminator) -> void
+    def add: (_ActiveRecord_Relation relation, *(NilClass | Symbol) sources) -> void
+    def all: () -> _ActiveRecord_Relation
+
+    private
+
+    def subclass_for: (Class model) -> Class
+    def union_for: (Class model) -> _Arel_Nodes_Node
+  end
+
+  def self.union: (*Symbol columns, ?discriminator: String discriminator) { (UnionRelation) -> void } -> _ActiveRecord_Relation
+end
