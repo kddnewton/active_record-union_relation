@@ -24,7 +24,7 @@ Or install it yourself as:
 
 Let's assume you're writing something like a search function, and you want to be able to return a polymorphic relation containing all of the search results. You could maintain a separate index table with links out to the entities or use a more advanced search engine. Or you could perform a `UNION` that searches each table.
 
-`UNION` subrelations must all have the same number of columns, so first we define the name of the columns that the `UNION` will select, then we define the sources that will become those columns from each subrelation. It makes most sense looking at an example.
+`UNION` subrelations must all have the same number of columns, so first we define the name of the columns that the `UNION` will select, then we define the sources that will become those columns from each subrelation. It makes more sense looking at an example.
 
 Let's assume we have the following structure with default table names:
 
@@ -92,6 +92,20 @@ relation.order(matched: :asc)
 # [#<Tag:0x00 id: 3, name: "foo">,
 #  #<Post:0x000 id: 2, title: "foo published">,
 #  #<Comment:0x00 id: 3, post_id: 2, body: "This is a comment with foo in it">]
+```
+
+The query generated in the example above will look something like:
+
+```sql
+SELECT discriminator, id, post_id, matched
+FROM (
+  (SELECT 'Post' AS "discriminator", id AS "id", NULL AS "post_id", title AS "matched" FROM "posts" WHERE "posts"."published" = $1 AND (title LIKE '%foo%'))
+  UNION
+  (SELECT 'Comment' AS "discriminator", id AS "id", post_id AS "post_id", body AS "matched" FROM "comments" WHERE (body LIKE '%foo%'))
+  UNION
+  (SELECT 'Tag' AS "discriminator", id AS "id", NULL AS "post_id", name AS "matched" FROM "tags" WHERE (name LIKE '%foo%'))
+) AS "union"
+ORDER BY "matched" ASC 
 ```
 
 ## Development
