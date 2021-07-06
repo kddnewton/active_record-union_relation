@@ -5,8 +5,8 @@ require_relative 'lib/active_record/union_relation/version'
 Gem::Specification.new do |spec|
   spec.name          = 'active_record-union_relation'
   spec.version       = ActiveRecord::UnionRelation::VERSION
-  spec.authors       = ['Kevin Deisz']
-  spec.email         = ['kevin.deisz@gmail.com']
+  spec.authors       = ['Kevin Newton']
+  spec.email         = ['kddnewton@gmail.com']
 
   spec.summary       = 'Create ActiveRecord relations from UNIONs'
   spec.homepage      = 'https://github.com/kddeisz/active_record-union_relation'
