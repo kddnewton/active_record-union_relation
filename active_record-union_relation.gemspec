@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['kddnewton@gmail.com']
 
   spec.summary       = 'Create ActiveRecord relations from UNIONs'
-  spec.homepage      = 'https://github.com/kddeisz/active_record-union_relation'
+  spec.homepage      = 'https://github.com/kddnewton/active_record-union_relation'
   spec.license       = 'MIT'
 
   spec.files         = Dir.chdir(__dir__) do
