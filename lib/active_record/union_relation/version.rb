@@ -2,6 +2,6 @@
 
 module ActiveRecord
   class UnionRelation
-    VERSION = '0.1.0'
+    VERSION = '0.1.1'
   end
 end
