@@ -10,7 +10,7 @@ There are times when you want to use SQL's [UNION](https://www.w3schools.com/sql
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_record-union_relation'
+gem "active_record-union_relation"
 ```
 
 And then execute:
@@ -47,7 +47,7 @@ Now, let's pull all of the records matching a specific term. For `Post`, we'll p
 ```ruby
 # Let's get a local variable that we'll use to reference within each of our
 # subqueries. Presumably this would come from some kind of user input.
-term = 'foo'
+term = "foo"
 
 # First, we call ActiveRecord::union. The arguments are the names of the columns
 # that will be aliased from each source relation. It also accepts a block that
@@ -59,7 +59,7 @@ relation =
     # just for this one table. That can include any kind of
     # joins/conditions/orders etc. that it needs to. In this case we'll need
     # published: true and a matching query.
-    posts = Post.where(published: true).where('title LIKE ?', "%#{term}%")
+    posts = Post.where(published: true).where("title LIKE ?", "%#{term}%")
 
     # Next, we'll add that posts relation as a subquery into the union. The
     # number of arguments here must directly align with the number of arguments
@@ -74,12 +74,12 @@ relation =
     # explicitly pulling post_id, we'll actually be able to call .post on the
     # comment records that get pulled since we alias them back when we
     # instantiate the objects.
-    comments = Comment.where('body LIKE ?', "%#{term}%")
+    comments = Comment.where("body LIKE ?", "%#{term}%")
     union.add comments, :id, :post_id, :body
 
     # Finally, we'll pull the tag records that we want and add them into the
     # overall union as well.
-    tags = Tag.where('name LIKE ?', "%#{term}%")
+    tags = Tag.where("name LIKE ?", "%#{term}%")
     union.add tags, :id, nil, :name
   end
 
@@ -114,15 +114,6 @@ ORDER BY "matched" ASC
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-To check types using `rbs`, you can run:
-
-```sh
-RBS_TEST_TARGET='ActiveRecord::UnionRelation::*' \
-ruby -rrbs/test/setup \
-  -Itest -Isig/active_record/union_relation.rbs \
-  test/active_record/union_relation_test.rb
-```
 
 ## Contributing
 

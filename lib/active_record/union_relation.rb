@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'active_record'
-require 'active_record/union_relation/version'
+require "active_record"
+require "active_record/union_relation/version"
 
 module ActiveRecord
   class UnionRelation
@@ -21,7 +21,7 @@ module ActiveRecord
     # raise this error so there's not some weird undefined method behavior.
     class NoConfiguredSubqueriesError < Error
       def initialize
-        super('No subqueries have been configured for this union')
+        super("No subqueries have been configured for this union")
       end
     end
 
@@ -31,7 +31,7 @@ module ActiveRecord
       # Sometimes you need some columns in some subqeries that you don't need in
       # others. In order to accomplish that and still maintain the matching
       # number of columns, you can put a null in space of a column instead.
-      NULL = Arel.sql('NULL')
+      NULL = Arel.sql("NULL")
 
       attr_reader :relation, :model_name, :sources
 
@@ -42,14 +42,14 @@ module ActiveRecord
       end
 
       def to_arel(columns, discriminator)
-        relation
-          .select(
-            Arel.sql("'#{model_name}'").as(quote_column_name(discriminator)),
-            *sources.zip(columns).map do |(source, column)|
+        relation.select(
+          Arel.sql("'#{model_name}'").as(quote_column_name(discriminator)),
+          *sources
+            .zip(columns)
+            .map do |(source, column)|
               Arel.sql(source.to_s).as(quote_column_name(column))
             end
-          )
-          .arel
+        ).arel
       end
 
       def to_mapping(columns)
@@ -97,7 +97,9 @@ module ActiveRecord
 
       Class.new(model) do
         define_singleton_method(:inheritance_column) { discriminator }
-        define_singleton_method(:instantiate) do |attributes, column_types = {}, &block|
+        define_singleton_method(
+          :instantiate
+        ) do |attributes, column_types = {}, &block|
           type = attributes.delete(inheritance_column)
 
           instantiate_instance_of(
@@ -115,7 +117,7 @@ module ActiveRecord
         subqueries
           .map { |subquery| subquery.to_arel(columns, discriminator) }
           .inject { |left, right| Arel::Nodes::Union.new(left, right) },
-        Arel.sql(model.connection.quote_table_name('union'))
+        Arel.sql(model.connection.quote_table_name("union"))
       )
     end
   end
@@ -129,7 +131,7 @@ module ActiveRecord
   # One additional column will be added to the query in order to discriminate
   # between all of the unioned types. Then when the objects are going to be
   # instantiated, we map the columns back to their original names.
-  def self.union(*columns, discriminator: 'discriminator')
+  def self.union(*columns, discriminator: "discriminator")
     UnionRelation.new(columns, discriminator).tap { |union| yield union }.all
   end
 end
