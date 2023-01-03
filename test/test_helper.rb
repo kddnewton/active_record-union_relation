@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
-require 'active_record/union_relation'
+$LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+require "active_record/union_relation"
 
-require 'minitest/autorun'
+require "minitest/autorun"
 
-require 'rails'
+require "rails"
 ActiveRecord::Tasks::DatabaseTasks.create_current
 
 ActiveRecord::Base.establish_connection
@@ -35,18 +35,18 @@ class Post < ActiveRecord::Base
   has_many :comments
   accepts_nested_attributes_for :comments
 
-  create!(published: false, title: 'foo not published')
+  create!(published: false, title: "foo not published")
   create!(
     published: true,
-    title: 'foo published',
+    title: "foo published",
     comments_attributes: [
-      { body: 'This is a comment' },
-      { body: 'This is another comment' },
-      { body: 'This is a comment with foo in it' }
+      { body: "This is a comment" },
+      { body: "This is another comment" },
+      { body: "This is a comment with foo in it" }
     ]
   )
 end
 
 class Tag < ActiveRecord::Base
-  create!([{ name: 'some' }, { name: 'tags' }, { name: 'foo' }])
+  create!([{ name: "some" }, { name: "tags" }, { name: "foo" }])
 end

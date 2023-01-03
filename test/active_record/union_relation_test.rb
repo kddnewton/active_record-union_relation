@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 class ActiveRecord::UnionRelationTest < Minitest::Test
   def test_version
@@ -15,23 +15,21 @@ class ActiveRecord::UnionRelationTest < Minitest::Test
 
   def test_bad_config_union
     assert_raises ActiveRecord::UnionRelation::MismatchedColumnsError do
-      ActiveRecord.union(:id) do |union|
-        union.add Post.all, :id, :title
-      end
+      ActiveRecord.union(:id) { |union| union.add Post.all, :id, :title }
     end
   end
 
   def test_good_union
-    term = 'foo'
+    term = "foo"
     relation =
       ActiveRecord.union(:id, :post_id, :matched) do |union|
-        posts = Post.where(published: true).where('title LIKE ?', "%#{term}%")
-        comments = Comment.where('body LIKE ?', "%#{term}%")
-        tags = Tag.where('name LIKE ?', "%#{term}%")
-    
-        union.add posts,    :id, nil,      :title
+        posts = Post.where(published: true).where("title LIKE ?", "%#{term}%")
+        comments = Comment.where("body LIKE ?", "%#{term}%")
+        tags = Tag.where("name LIKE ?", "%#{term}%")
+
+        union.add posts, :id, nil, :title
         union.add comments, :id, :post_id, :body
-        union.add tags,     :id, nil,      :name
+        union.add tags, :id, nil, :name
       end
 
     unioned = relation.order(matched: :asc).group_by(&:class)
