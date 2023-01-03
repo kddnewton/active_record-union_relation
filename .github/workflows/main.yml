@@ -29,5 +29,7 @@ jobs:
       with:
         ruby-version: '3.2'
         bundler-cache: true
-    - name: Test
-      run: bundle exec rake test
+    - name: Lint and test
+      run: |
+        bundle exec rake stree:check
+        bundle exec rake test
