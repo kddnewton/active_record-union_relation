@@ -140,7 +140,7 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
-    syntax_tree (6.1.0)
+    syntax_tree (6.1.1)
       prettier_print (>= 1.2.0)
     thor (1.2.1)
     timeout (0.3.2)
