@@ -96,7 +96,7 @@ module ActiveRecord
       mappings = subqueries.to_h { |subquery| subquery.to_mapping(columns) }
 
       Class.new(model) do
-        define_singleton_method(:inheritance_column) { discriminator }
+        self.inheritance_column = discriminator
         define_singleton_method(
           :instantiate
         ) do |attributes, column_types = {}, &block|
