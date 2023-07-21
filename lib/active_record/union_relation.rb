@@ -96,12 +96,45 @@ module ActiveRecord
       mappings = subqueries.to_h { |subquery| subquery.to_mapping(columns) }
 
       Class.new(model) do
+        # Set the inheritance column and register the discriminator as a string
+        # column so that Active Record will instantiate the right subclass.
         self.inheritance_column = discriminator
+        attribute inheritance_column, :string
 
         define_singleton_method(:instantiate) do |attrs, columns = {}, &block|
-          type = attrs.delete(inheritance_column)
-          attrs.transform_keys!(&mappings[type])
-          instantiate_instance_of(type.constantize, attrs, columns, &block)
+          mapped = {}
+          mapping = mappings[attrs[inheritance_column]]
+
+          # Map the result set columns back to their original source column
+          # names. This ensures that even though the UNION saw them as the same
+          # columns our resulting records see them as their original names.
+          attrs.each do |key, value|
+            case mapping[key]
+            when Subquery::NULL
+              # Ignore columns that didn't have a value.
+            when nil
+              # If we don't have a mapping for this column, then it's the
+              # discriminator. Map that column directly.
+              mapped[key] = value
+            else
+              # Otherwise, use the mapping to map the column back to its
+              # original name.
+              mapped[mapping[key]] = value
+            end
+          end
+
+          # Now that we've mapped all of the columns, we can call super with the
+          # mapped values.
+          super(mapped, columns, &block)
+        end
+
+        # Override the default find_sti_class method because it does sanity
+        # checks to ensure that the class you're trying to instantiate is a
+        # subclass of the current class. Since we want to explicitly _not_ do
+        # that, we will instead just check that it is a valid model class.
+        define_singleton_method(:find_sti_class) do |type_name|
+          type = type_name.constantize
+          type < ActiveRecord::Base ? type : super(type_name)
         end
       end
     end
