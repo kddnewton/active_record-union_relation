@@ -97,17 +97,11 @@ module ActiveRecord
 
       Class.new(model) do
         self.inheritance_column = discriminator
-        define_singleton_method(
-          :instantiate
-        ) do |attributes, column_types = {}, &block|
-          type = attributes.delete(inheritance_column)
 
-          instantiate_instance_of(
-            Object.const_get(type),
-            attributes.transform_keys(&mappings[type]),
-            column_types,
-            &block
-          )
+        define_singleton_method(:instantiate) do |attrs, columns = {}, &block|
+          type = attrs.delete(inheritance_column)
+          attrs.transform_keys!(&mappings[type])
+          instantiate_instance_of(type.constantize, attrs, columns, &block)
         end
       end
     end
