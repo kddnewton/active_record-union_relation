@@ -53,7 +53,9 @@ module ActiveRecord
       end
 
       def to_mapping(columns)
-        [model_name, columns.zip(sources).to_h]
+        # Remove the scope_name/table_name when using table_name.column
+        sources_without_scope = sources.map { _1.split('.').last }
+        [model_name, columns.zip(sources_without_scope).to_h]
       end
 
       private

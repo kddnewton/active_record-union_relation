@@ -37,4 +37,22 @@ class ActiveRecord::UnionRelationTest < Minitest::Test
 
     assert_kind_of Post, unioned[Comment][0].post
   end
+
+  # When using joined queries it's often required to append the table/scope name before the column name.
+  # This to disambiguate the column name.
+  # ActiveRecord attributes should not contain the scope/table part of this name
+  def test_scoped_column_union
+    term = "foo"
+    relation =
+      ActiveRecord.union(:id, :post_id, :body, :title) do |union|
+        comments = Comment.joins(:post) .where(posts: { published: true })
+        posts = Post.none
+
+        union.add comments, "comments.id", "comments.post_id", "comments.body", :title
+        union.add posts, nil, "posts.id", nil, :title
+      end
+
+    items = relation.order(title: :asc)
+    assert_kind_of Post, items.first.post
+  end
 end
