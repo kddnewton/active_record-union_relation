@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ../..
   specs:
     active_record-union_relation (0.1.1)
       activerecord (>= 6)
@@ -125,7 +125,6 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.2-x86_64-linux)
       racc (~> 1.4)
-    pg (1.5.4)
     prettier_print (1.2.1)
     psych (5.1.2)
       stringio
@@ -195,11 +194,10 @@ PLATFORMS
 DEPENDENCIES
   active_record-union_relation!
   minitest
-  pg
   rails
   rake
   sqlite3
   syntax_tree
 
 BUNDLED WITH
-   2.4.1
+   2.4.13
