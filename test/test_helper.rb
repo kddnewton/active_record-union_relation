@@ -2,10 +2,10 @@
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "active_record/union_relation"
-
 require "minitest/autorun"
-
 require "rails"
+
+ENV["DATABASE_URL"] ||= "sqlite3::memory:"
 ActiveRecord::Tasks::DatabaseTasks.create_current
 
 ActiveRecord::Base.establish_connection
