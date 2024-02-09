@@ -54,7 +54,7 @@ module ActiveRecord
 
       def to_mapping(columns)
         # Remove the scope_name/table_name when using table_name.column
-        sources_without_scope = sources.map { _1.split('.').last }
+        sources_without_scope = sources.map { _1.split(".").last }
         [model_name, columns.zip(sources_without_scope).to_h]
       end
 
@@ -144,7 +144,7 @@ module ActiveRecord
     def union_for(model)
       Arel::Nodes::As.new(
         subqueries
-          .map { |subquery| subquery.to_arel(columns, discriminator) }
+          .map { |subquery| subquery.to_arel(columns, discriminator).ast }
           .inject { |left, right| Arel::Nodes::Union.new(left, right) },
         Arel.sql(model.connection.quote_table_name("union"))
       )

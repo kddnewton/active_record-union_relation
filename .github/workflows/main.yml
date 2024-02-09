@@ -5,11 +5,23 @@ on:
 - pull_request
 
 jobs:
-  ci:
-    name: CI
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - run: sudo apt-get -yqq install libpq-dev libsqlite3-dev
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
+        bundler-cache: true
+    - name: Lint
+      run: bundle exec rake stree:check
+  postgresql:
+    name: PostgreSQL
     runs-on: ubuntu-latest
     env:
-      CI: true
+      BUNDLE_GEMFILE: gemfiles/postgresql/Gemfile
       DATABASE_URL: postgres://postgres:@localhost:5432/postgres
       RAILS_ENV: test
     services:
@@ -28,6 +40,24 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.2'
+        bundler-cache: true
+    - name: Lint and test
+      run: |
+        bundle exec rake stree:check
+        bundle exec rake test
+  sqlite:
+    name: SQLite
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: gemfiles/sqlite/Gemfile
+      DATABASE_URL: "sqlite3::memory:"
+      RAILS_ENV: test
+    steps:
+    - run: sudo apt-get -yqq install libsqlite3-dev
+    - uses: actions/checkout@master
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.3'
         bundler-cache: true
     - name: Lint and test
       run: |

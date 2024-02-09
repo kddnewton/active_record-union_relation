@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ../..
   specs:
     active_record-union_relation (0.1.1)
       activerecord (>= 6)
@@ -173,8 +173,6 @@ GEM
     reline (0.4.2)
       io-console (~> 0.5)
     ruby2_keywords (0.0.5)
-    sqlite3 (1.7.2-arm64-darwin)
-    sqlite3 (1.7.2-x86_64-linux)
     stringio (3.1.0)
     syntax_tree (6.2.0)
       prettier_print (>= 1.2.0)
@@ -198,8 +196,7 @@ DEPENDENCIES
   pg
   rails
   rake
-  sqlite3
   syntax_tree
 
 BUNDLED WITH
-   2.4.1
+   2.4.13

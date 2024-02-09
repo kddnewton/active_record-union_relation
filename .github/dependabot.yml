@@ -4,6 +4,14 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "bundler"
+    directory: "/gemfiles/postgresql"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "bundler"
+    directory: "/gemfiles/sqlite"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
