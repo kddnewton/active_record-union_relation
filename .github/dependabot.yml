@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "bundler"
+    directory: "/gemfiles/mysql"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "bundler"
     directory: "/gemfiles/postgresql"
     schedule:
       interval: "daily"

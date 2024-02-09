@@ -2,8 +2,6 @@
 
 source "https://rubygems.org"
 
-gemspec
+gemspec path: "../.."
 
 gem "mysql2"
-gem "pg"
-gem "sqlite3"
