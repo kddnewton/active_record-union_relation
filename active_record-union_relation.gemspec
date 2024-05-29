@@ -22,14 +22,16 @@ Gem::Specification.new do |spec|
     "rubygems_mfa_required" => "true"
   }
 
-  spec.files =
-    Dir.chdir(__dir__) do
-      `git ls-files -z`.split("\x0")
-        .reject { |f| f.match(%r{^(test|spec|features)/}) }
-    end
+  spec.files = %w[
+    CHANGELOG.md
+    CODE_OF_CONDUCT.md
+    LICENSE
+    README.md
+    active_record-union_relation.gemspec
+    lib/active_record/union_relation.rb
+    lib/active_record/union_relation/version.rb
+  ]
 
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activerecord", ">= 6"

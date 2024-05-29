@@ -4,4 +4,4 @@ source "https://rubygems.org"
 
 gemspec path: "../.."
 
-gem "sqlite3"
+gem "sqlite3", "~> 1.0"
