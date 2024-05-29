@@ -39,6 +39,18 @@ module ActiveRecord
       assert_kind_of Post, unioned[Comment][0].post
     end
 
+    def test_counts
+      relation = ActiveRecord.union(:id, :post_id) do |union|
+        posts = Post.where(published: true)
+        comments = Comment.where("body LIKE ?", "%foo%")
+
+        union.add posts, :id, nil
+        union.add comments, :id, :post_id
+      end
+
+      assert_equal 2, relation.count
+    end
+
     # When using joined queries it's often required to append the table/scope name
     # before the column name. This is to disambiguate the column name.
     # ActiveRecord attributes should not contain the scope/table part of this
