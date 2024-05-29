@@ -84,7 +84,7 @@ GEM
     base64 (0.2.0)
     bigdecimal (3.1.8)
     builder (3.2.4)
-    concurrent-ruby (1.2.3)
+    concurrent-ruby (1.3.1)
     connection_pool (2.4.1)
     crass (1.0.6)
     date (3.3.4)
@@ -129,7 +129,7 @@ GEM
     prettier_print (1.2.1)
     psych (5.1.2)
       stringio
-    racc (1.7.3)
+    racc (1.8.0)
     rack (3.0.11)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -168,12 +168,12 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rake (13.2.1)
-    rdoc (6.6.3.1)
+    rdoc (6.7.0)
       psych (>= 4.0.0)
-    reline (0.5.7)
+    reline (0.5.8)
       io-console (~> 0.5)
-    sqlite3 (2.0.2-arm64-darwin)
-    sqlite3 (2.0.2-x86_64-linux-gnu)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     stringio (3.1.0)
     syntax_tree (6.2.0)
       prettier_print (>= 1.2.0)
@@ -185,10 +185,11 @@ GEM
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
-    zeitwerk (2.6.14)
+    zeitwerk (2.6.15)
 
 PLATFORMS
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -198,8 +199,8 @@ DEPENDENCIES
   pg
   rails
   rake
-  sqlite3
+  sqlite3 (~> 1.0)
   syntax_tree
 
 BUNDLED WITH
-   2.4.1
+   2.5.7
