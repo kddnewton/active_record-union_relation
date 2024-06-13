@@ -25,6 +25,11 @@ ActiveRecord::Schema.define do
     t.references :post
     t.text :body
   end
+
+  create_table :links, force: true do |t|
+    t.string :type
+    t.string :url
+  end
 end
 
 class Tag < ActiveRecord::Base
@@ -39,8 +44,21 @@ class Comment < ActiveRecord::Base
   belongs_to :post
 end
 
+class Link < ActiveRecord::Base
+end
+
+class ImageLink < Link
+end
+
+class VideoLink < Link
+end
+
+class AudioLink < Link
+end
+
 ActiveRecord::Base.transaction do
   Tag.create!([{ name: "some" }, { name: "tags" }, { name: "foo" }])
+
   Post.create!(
     [
       { published: false, title: "foo not published" },
@@ -53,6 +71,15 @@ ActiveRecord::Base.transaction do
           { body: "This is a comment with foo in it" }
         ]
       }
+    ]
+  )
+
+  Link.create!(
+    [
+      { type: "ImageLink", url: "http://example.com/some-image" },
+      { type: "VideoLink", url: "http://example.com/some-video" },
+      { type: "AudioLink", url: "http://example.com/some-audio1" },
+      { type: "AudioLink", url: "http://example.com/some-audio2" }
     ]
   )
 end
