@@ -61,5 +61,19 @@ module ActiveRecord
       items = relation.order(title: :asc)
       assert_kind_of Post, items.first.post
     end
+
+    def test_single_table_inheritance
+      relation =
+        ActiveRecord.union(:id, :text) do |union|
+          union.add Tag.all, :id, :name
+          union.add Link.all, :id, :url
+        end
+
+      unioned = relation.where("text LIKE ?", "%some%").group_by(&:class)
+      assert_equal 4, unioned.length
+
+      unioned.delete(Tag)
+      assert unioned.keys.all? { |key| key < Link }
+    end
   end
 end

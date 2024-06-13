@@ -33,17 +33,68 @@ module ActiveRecord
       # number of columns, you can put a null in space of a column instead.
       NULL = Arel.sql("NULL")
 
+      # A model name for a model that is not using single-table inheritance. In
+      # this case we use the model name itself as the discriminator and only
+      # need one entry in the mappings hash that maps records to the columns
+      # that we are pulling from the result.
+      class SingleModelName
+        attr_reader :name
+
+        def initialize(name)
+          @name = name
+        end
+
+        def each_name
+          yield name
+        end
+
+        def to_sql
+          Arel.sql("'#{name}'")
+        end
+      end
+
+      # A model name for a model that is using single-table inheritance. In this
+      # case we use the inheritance column as the discriminator and need to
+      # include all of the subclasses in the mappings hash.
+      class MultiModelName
+        attr_reader :inheritance_column, :names
+
+        def initialize(inheritance_column, names)
+          @inheritance_column = inheritance_column
+          @names = names
+        end
+
+        def each_name(&block)
+          names.each(&block)
+        end
+
+        def to_sql
+          Arel.sql(inheritance_column)
+        end
+      end
+
       attr_reader :relation, :model_name, :sources
 
       def initialize(relation, sources)
         @relation = relation
-        @model_name = relation.model.name
+
+        model = relation.model
+        @model_name =
+          if model._has_attribute?(model.inheritance_column)
+            MultiModelName.new(
+              quote_column_name(model.inheritance_column),
+              model.descendants.map(&:name)
+            )
+          else
+            SingleModelName.new(model.name)
+          end
+
         @sources = sources.map { |source| source ? source.to_s : NULL }
       end
 
       def to_arel(columns, discriminator)
         relation.select(
-          Arel.sql("'#{model_name}'").as(quote_column_name(discriminator)),
+          model_name.to_sql.as(quote_column_name(discriminator)),
           *sources
             .zip(columns)
             .map do |(source, column)|
@@ -52,10 +103,11 @@ module ActiveRecord
         ).arel
       end
 
-      def to_mapping(columns)
+      def merge_mappings(mappings, columns)
         # Remove the scope_name/table_name when using table_name.column
-        sources_without_scope = sources.map { _1.split(".").last }
-        [model_name, columns.zip(sources_without_scope).to_h]
+        mapping =
+          columns.zip(sources.map { |source| source.split(".").last }).to_h
+        model_name.each_name { |name| mappings[name] = mapping }
       end
 
       private
@@ -95,7 +147,9 @@ module ActiveRecord
 
     def subclass_for(model)
       discriminator = self.discriminator
-      mappings = subqueries.to_h { |subquery| subquery.to_mapping(columns) }
+
+      mappings = {}
+      subqueries.each { |subquery| subquery.merge_mappings(mappings, columns) }
 
       Class.new(model) do
         # Set the inheritance column and register the discriminator as a string
