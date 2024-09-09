@@ -121,7 +121,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
-    pg (1.5.7)
+    pg (1.5.8)
     prettier_print (1.2.1)
     psych (5.1.2)
       stringio
