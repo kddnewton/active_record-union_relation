@@ -75,5 +75,22 @@ module ActiveRecord
       unioned.delete(Tag)
       assert unioned.keys.all? { |key| key < Link }
     end
+
+    def test_ast_breaking_things
+      models = [Notification, Comment]
+      attrs = %i[id body post_id].freeze
+
+      relation =
+        ActiveRecord.union(*attrs) do |union|
+          models.each do |model|
+            # If you comment out this next it will work OR remove .ast call
+            next if model == Notification
+            union.add model.all, *attrs
+          end
+        end
+
+      items = relation.order(body: :asc)
+      assert_kind_of Post, items.first.post
+    end
   end
 end

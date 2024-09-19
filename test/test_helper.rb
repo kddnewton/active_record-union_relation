@@ -26,6 +26,11 @@ ActiveRecord::Schema.define do
     t.text :body
   end
 
+  create_table :notifications, force: true do |t|
+    t.references :post
+    t.text :body
+  end
+
   create_table :links, force: true do |t|
     t.string :type
     t.string :url
@@ -37,10 +42,16 @@ end
 
 class Post < ActiveRecord::Base
   has_many :comments
+  has_many :notifications
   accepts_nested_attributes_for :comments
+  accepts_nested_attributes_for :notifications
 end
 
 class Comment < ActiveRecord::Base
+  belongs_to :post
+end
+
+class Notification < ActiveRecord::Base
   belongs_to :post
 end
 
@@ -66,6 +77,11 @@ ActiveRecord::Base.transaction do
         published: true,
         title: "foo published",
         comments_attributes: [
+          { body: "This is a comment" },
+          { body: "This is another comment" },
+          { body: "This is a comment with foo in it" }
+        ],
+        notifications_attributes: [
           { body: "This is a comment" },
           { body: "This is another comment" },
           { body: "This is a comment with foo in it" }
