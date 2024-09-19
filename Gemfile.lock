@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    active_record-union_relation (0.3.0)
+    active_record-union_relation (0.3.1)
       activerecord (>= 6)
 
 GEM
@@ -105,6 +105,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.7)
     minitest (5.25.1)
     mysql2 (0.5.6)
     net-imap (0.4.14)
@@ -117,9 +118,8 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.3)
-    nokogiri (1.16.7-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.7-x86_64-linux)
+    nokogiri (1.16.7)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     pg (1.5.8)
     prettier_print (1.2.1)
@@ -169,8 +169,8 @@ GEM
     reline (0.5.9)
       io-console (~> 0.5)
     securerandom (0.3.1)
-    sqlite3 (2.0.4-arm64-darwin)
-    sqlite3 (2.0.4-x86_64-linux-gnu)
+    sqlite3 (1.7.3)
+      mini_portile2 (~> 2.8.0)
     stringio (3.1.1)
     syntax_tree (6.2.0)
       prettier_print (>= 1.2.0)
@@ -197,7 +197,7 @@ DEPENDENCIES
   pg
   rails
   rake
-  sqlite3 (~> 2.0)
+  sqlite3 (~> 1.7)
   syntax_tree
 
 BUNDLED WITH
