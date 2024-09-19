@@ -197,9 +197,13 @@ module ActiveRecord
 
     def union_for(model)
       Arel::Nodes::As.new(
-        subqueries
-          .map { |subquery| subquery.to_arel(columns, discriminator).ast }
-          .inject { |left, right| Arel::Nodes::Union.new(left, right) },
+        if subqueries.one?
+          subqueries.first.to_arel(columns, discriminator)
+        else
+          subqueries
+            .map { |subquery| subquery.to_arel(columns, discriminator).ast }
+            .inject { |left, right| Arel::Nodes::Union.new(left, right) }
+        end,
         Arel.sql(model.connection.quote_table_name("union"))
       )
     end

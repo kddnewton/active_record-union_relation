@@ -75,5 +75,25 @@ module ActiveRecord
       unioned.delete(Tag)
       assert unioned.keys.all? { |key| key < Link }
     end
+
+    def test_one_model
+      relation =
+        ActiveRecord.union(:id, :body, :post_id) do |union|
+          union.add Comment.all, :id, :body, :post_id
+        end
+
+      items = relation.order(body: :asc)
+      assert_kind_of Post, items.first.post
+    end
+
+    def test_one_sti_model
+      relation =
+        ActiveRecord.union(:id, :url) { |union| union.add Link.all, :id, :url }
+
+      unioned = relation.group_by(&:class)
+      unioned.delete(Tag)
+
+      assert unioned.keys.all? { |key| key < Link }
+    end
   end
 end
