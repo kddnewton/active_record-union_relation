@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+## [0.3.1] - 2024-09-19
+
+### Changed
+
+- Fix up relations with a single source model.
+
 ## [0.3.0] - 2024-06-13
 
 ### Added
@@ -37,7 +43,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - 🎉 Initial release. 🎉
 
-[unreleased]: https://github.com/kddnewton/active_record-union_relation/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/kddnewton/active_record-union_relation/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/kddnewton/active_record-union_relation/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/kddnewton/active_record-union_relation/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/kddnewton/active_record-union_relation/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/kddnewton/active_record-union_relation/compare/v0.1.1...v0.2.0
