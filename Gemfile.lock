@@ -169,8 +169,8 @@ GEM
     reline (0.5.10)
       io-console (~> 0.5)
     securerandom (0.3.1)
-    sqlite3 (2.1.1-arm64-darwin)
-    sqlite3 (2.1.1-x86_64-linux-gnu)
+    sqlite3 (2.2.0-arm64-darwin)
+    sqlite3 (2.2.0-x86_64-linux-gnu)
     stringio (3.1.1)
     syntax_tree (6.2.0)
       prettier_print (>= 1.2.0)
@@ -197,7 +197,7 @@ DEPENDENCIES
   pg
   rails
   rake
-  sqlite3 (~> 2.1)
+  sqlite3 (~> 2.2)
   syntax_tree
 
 BUNDLED WITH
