@@ -6,4 +6,4 @@ gemspec
 
 gem "mysql2"
 gem "pg"
-gem "sqlite3", "~> 2.4"
+gem "sqlite3", "~> 2.5"
