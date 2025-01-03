@@ -157,7 +157,11 @@ module ActiveRecord
         self.inheritance_column = discriminator
         attribute inheritance_column, :string
 
-        define_singleton_method(:instantiate) do |attrs, columns = {}, &block|
+        define_singleton_method(
+          :instantiate
+        ) do |attrs_or_indexed_column, columns = {}, &block|
+          attrs = attrs_or_indexed_column.to_h
+
           mapped = {}
           mapping = mappings[attrs[inheritance_column]]
 
