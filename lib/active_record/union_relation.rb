@@ -3,6 +3,17 @@
 require "active_record"
 require "active_record/union_relation/version"
 
+if defined?(ActiveRecord::Result::IndexedRow)
+  raise if ActiveRecord::Result::IndexedRow.method_defined?(:each)
+
+  class ActiveRecord::Result::IndexedRow
+    # Monkey-patch in the #each method so that we can treat it like a hash.
+    def each(&block)
+      @column_indexes.each { |column, index| yield column, @row[index] }
+    end
+  end
+end
+
 module ActiveRecord
   class UnionRelation
     class Error < StandardError

@@ -20,8 +20,13 @@ jobs:
   mysql:
     name: MySQL
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gemfile:
+          - gemfiles/mysql-ar7/Gemfile
+          - gemfiles/mysql-ar8/Gemfile
     env:
-      BUNDLE_GEMFILE: gemfiles/mysql/Gemfile
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_URL: mysql2://root:password@127.0.0.1:3306/test
       RAILS_ENV: test
     services:
@@ -53,8 +58,13 @@ jobs:
   postgresql:
     name: PostgreSQL
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gemfile:
+          - gemfiles/postgresql-ar7/Gemfile
+          - gemfiles/postgresql-ar8/Gemfile
     env:
-      BUNDLE_GEMFILE: gemfiles/postgresql/Gemfile
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_URL: postgres://postgres:@localhost:5432/postgres
       RAILS_ENV: test
     services:
@@ -79,8 +89,13 @@ jobs:
   sqlite:
     name: SQLite
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gemfile:
+          - gemfiles/sqlite-ar7/Gemfile
+          - gemfiles/sqlite-ar8/Gemfile
     env:
-      BUNDLE_GEMFILE: gemfiles/sqlite/Gemfile
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       DATABASE_URL: "sqlite3::memory:"
       RAILS_ENV: test
     steps:

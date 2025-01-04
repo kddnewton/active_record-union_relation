@@ -5,15 +5,14 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "bundler"
-    directory: "/gemfiles/mysql"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "bundler"
-    directory: "/gemfiles/postgresql"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "bundler"
-    directory: "/gemfiles/sqlite"
+    directories:
+      - "/"
+      - "/gemfiles/mysql-ar7"
+      - "/gemfiles/mysql-ar8"
+      - "/gemfiles/postgresql-ar7"
+      - "/gemfiles/postgresql-ar8"
+      - "/gemfiles/sqlite-ar7"
+      - "/gemfiles/sqlite-ar8"
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
