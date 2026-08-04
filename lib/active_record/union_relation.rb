@@ -59,6 +59,10 @@ module ActiveRecord
           yield name
         end
 
+        def matches?(name)
+          name == self.name
+        end
+
         def to_sql
           Arel.sql("'#{name}'")
         end
@@ -68,15 +72,26 @@ module ActiveRecord
       # case we use the inheritance column as the discriminator and need to
       # include all of the subclasses in the mappings hash.
       class MultiModelName
-        attr_reader :inheritance_column, :names
+        attr_reader :inheritance_column, :model
 
-        def initialize(inheritance_column, names)
+        def initialize(inheritance_column, model)
           @inheritance_column = inheritance_column
-          @names = names
+          @model = model
         end
 
-        def each_name(&block)
-          names.each(&block)
+        def each_name
+          [model, *model.descendants].each { |klass| yield klass.name }
+        end
+
+        def matches?(name)
+          klass =
+            begin
+              name.constantize
+            rescue NameError
+              nil
+            end
+
+          !klass.nil? && klass <= model
         end
 
         def to_sql
@@ -94,7 +109,7 @@ module ActiveRecord
           if model._has_attribute?(model.inheritance_column)
             MultiModelName.new(
               quote_column_name(model.inheritance_column),
-              model.descendants.map(&:name)
+              model
             )
           else
             SingleModelName.new(model.name)
@@ -115,10 +130,17 @@ module ActiveRecord
       end
 
       def merge_mappings(mappings, columns)
-        # Remove the scope_name/table_name when using table_name.column
-        mapping =
-          columns.zip(sources.map { |source| source.split(".").last }).to_h
+        mapping = mapping_for(columns)
         model_name.each_name { |name| mappings[name] = mapping }
+      end
+
+      def mapping_for(columns)
+        # Remove the scope_name/table_name when using table_name.column
+        columns.zip(sources.map { |source| source.split(".").last }).to_h
+      end
+
+      def matches?(name)
+        model_name.matches?(name)
       end
 
       private
@@ -161,6 +183,23 @@ module ActiveRecord
 
       mappings = {}
       subqueries.each { |subquery| subquery.merge_mappings(mappings, columns) }
+
+      # Descendants of a model using single-table inheritance are snapshotted
+      # into the mappings when the union is built, but with lazy autoloading
+      # some subclasses may not be loaded yet at that point. Resolve unknown
+      # discriminator values on first use instead of failing to instantiate
+      # the row. The last matching subquery wins, mirroring the merge order of
+      # the eagerly registered names above.
+      subqueries = self.subqueries
+      mappings.default_proc = ->(hash, name) do
+        subquery =
+          name &&
+            subqueries.reverse_each.detect do |candidate|
+              candidate.matches?(name)
+            end
+
+        hash[name] = subquery.mapping_for(columns) if subquery
+      end
 
       Class.new(model) do
         # Set the inheritance column and register the discriminator as a string

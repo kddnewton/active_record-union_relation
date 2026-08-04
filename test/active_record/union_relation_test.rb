@@ -95,5 +95,34 @@ module ActiveRecord
 
       assert unioned.keys.all? { |key| key < Link }
     end
+
+    def test_sti_subclass_defined_after_union_is_built
+      relation =
+        ActiveRecord.union(:id, :url) { |union| union.add Link.all, :id, :url }
+
+      Object.const_set(:PodcastLink, Class.new(Link))
+      PodcastLink.create!(url: "http://example.com/some-podcast")
+
+      podcast =
+        relation.detect { |link| link.url == "http://example.com/some-podcast" }
+
+      assert_instance_of PodcastLink, podcast
+    ensure
+      PodcastLink.delete_all
+      Object.send(:remove_const, :PodcastLink)
+    end
+
+    def test_sti_rows_with_base_class_type
+      Link.create!(type: "Link", url: "http://example.com/some-base")
+
+      relation =
+        ActiveRecord.union(:id, :url) { |union| union.add Link.all, :id, :url }
+
+      base =
+        relation.detect { |link| link.url == "http://example.com/some-base" }
+      assert_instance_of Link, base
+    ensure
+      Link.where(url: "http://example.com/some-base").delete_all
+    end
   end
 end
