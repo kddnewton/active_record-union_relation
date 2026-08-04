@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ## [Unreleased]
 
+### Changed
+
+- Resolve STI discriminator values lazily, so subclasses that are autoloaded after the union is built still instantiate, and rows whose type column contains the base class name instantiate as the base class.
+
 ## [0.4.0] - 2025-01-04
 
 ### Added
